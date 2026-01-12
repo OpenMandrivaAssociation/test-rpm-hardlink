@@ -1,8 +1,10 @@
 Name:      test-rpm-hardlink
-Version:   1
+Version:   1.1
 Release:   1
 Summary:   Testing hardlink functionality in RPM
 License:   MIT
+
+BuildArch: noarch
 
 %description
 %{summary}
@@ -20,7 +22,8 @@ echo "world" > c
 rm c
 ln a c
 
+# Create a sparse 4GB file
+truncate -s 4G bigfile
+
 %files
-%{_datadir}/%{name}/a
-%{_datadir}/%{name}/b
-%{_datadir}/%{name}/c
+%{_datadir}/%{name}
