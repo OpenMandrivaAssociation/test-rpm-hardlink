@@ -1,5 +1,5 @@
 Name:      test-rpm-hardlink
-Version:   1.3
+Version:   1.4
 Release:   1
 Summary:   Testing hardlink functionality in RPM
 License:   MIT
@@ -27,6 +27,11 @@ ln c a
 # Hardlink group #2
 echo "hello2" > e
 ln e f
+
+# Hardlink group #3
+echo "triple" > g
+ln g h
+ln g i
 
 # Zero-size file
 touch emptyfile
@@ -70,6 +75,11 @@ echo "nested" > x/y/z/file
 # Forward symlink
 %{_datadir}/%{name}/earlylink
 %{_datadir}/%{name}/laterfile
+
+# Hardlink group #3 (3 links)
+%attr(0664, 7077, 7077) %{_datadir}/%{name}/g
+%attr(0664, 7077, 7077) %{_datadir}/%{name}/h
+%attr(0664, 7077, 7077) %{_datadir}/%{name}/i
 
 # Nested directories
 %dir %attr(0750, 5055, 5055) %{_datadir}/%{name}/x
