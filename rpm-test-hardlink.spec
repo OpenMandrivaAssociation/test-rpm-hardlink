@@ -1,5 +1,5 @@
 Name:      test-rpm-hardlink
-Version:   1.2
+Version:   1.3
 Release:   1
 Summary:   Testing hardlink functionality in RPM
 License:   MIT
@@ -20,56 +20,59 @@ echo "b content" > b
 # Create a sparse 4GB file
 truncate -s 4G bigfile
 
-echo "hello" > c
+# Hardlink group #1
+echo "hello1" > c
 ln c a
 
-echo "group2" > e
+# Hardlink group #2
+echo "hello2" > e
 ln e f
 
+# Zero-size file
 touch emptyfile
 
+# Forward symlink
 echo "later" > laterfile
 ln -s laterfile earlylink
 
+# Symlink
 ln -s b d
 
+# Nested file
 echo "nested" > x/y/z/file
 
 %files
 %dir %{_datadir}/%{name}
 
 # Hardlink group #1
-%{_datadir}/%{name}/a
-%{_datadir}/%{name}/c
+%attr(0640, 1011, 1011) %{_datadir}/%{name}/a
+%attr(0640, 1011, 1011) %{_datadir}/%{name}/c
 
 # Normal file
-%{_datadir}/%{name}/b
+%attr(0600, 0, 0) %{_datadir}/%{name}/b
 
 # Sparse file
-%{_datadir}/%{name}/bigfile
+%attr(0644, 2022, 2022) %{_datadir}/%{name}/bigfile
 
-# Symlink to b
-%{_datadir}/%{name}/d
+# Symlink
+%attr(0777, 0, 0) %{_datadir}/%{name}/d
 
 # Hardlink group #2
-%{_datadir}/%{name}/e
-%{_datadir}/%{name}/f
+%attr(0660, 3033, 3033) %{_datadir}/%{name}/e
+%attr(0660, 3033, 3033) %{_datadir}/%{name}/f
 
 # Zero-size file
-%{_datadir}/%{name}/emptyfile
+%attr(0440, 0, 0) %{_datadir}/%{name}/emptyfile
 
 # Ghost file
-%ghost %{_datadir}/%{name}/ghostfile
+%ghost %attr(0400, 4044, 4044) %{_datadir}/%{name}/ghostfile
 
 # Forward symlink
 %{_datadir}/%{name}/earlylink
 %{_datadir}/%{name}/laterfile
 
-# Nested directory structure
-%dir %{_datadir}/%{name}/x
-%dir %{_datadir}/%{name}/x/y
-%dir %{_datadir}/%{name}/x/y/z
-%{_datadir}/%{name}/x/y/z/file
-
-# Another ghost file, as last
-%ghost %{_datadir}/%{name}/ghost-after
+# Nested directories
+%dir %attr(0750, 5055, 5055) %{_datadir}/%{name}/x
+%dir %attr(0750, 5055, 5055) %{_datadir}/%{name}/x/y
+%dir %attr(0750, 5055, 5055) %{_datadir}/%{name}/x/y/z
+%attr(0644, 6066, 6066) %{_datadir}/%{name}/x/y/z/file
