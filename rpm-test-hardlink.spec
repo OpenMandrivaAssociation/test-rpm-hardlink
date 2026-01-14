@@ -1,5 +1,5 @@
 Name:      test-rpm-hardlink
-Version:   1.4
+Version:   1.5
 Release:   1
 Summary:   Testing hardlink functionality in RPM
 License:   MIT
@@ -86,3 +86,11 @@ echo "nested" > x/y/z/file
 %dir %attr(0750, 5055, 5055) %{_datadir}/%{name}/x/y
 %dir %attr(0750, 5055, 5055) %{_datadir}/%{name}/x/y/z
 %attr(0644, 6066, 6066) %{_datadir}/%{name}/x/y/z/file
+
+# Character devices
+%attr(0600, root, root) %dev(c, 1, 3) /dev/null-test
+%attr(0600, root, root) %dev(c, 5, 1) /dev/console-test
+
+# Block devices
+%attr(0600, root, root) %dev(b, 8, 0) /dev/sda-test
+%attr(0600, root, root) %dev(b, 65, 0) /dev/nvme0n1-test
